@@ -8,6 +8,11 @@
 }
 
 @media (min-width: 768px) {
+    .txt-logo{
+        position: fixed;
+        left:270px;
+    }
+
     .img-logo {
         position: absolute;
         height: 70px;
@@ -51,6 +56,12 @@
 }
 
 @media (max-width: 768px) {
+    .txt-logo{
+        position: relative;
+        left:88px;
+        margin-bottom: 18px;
+    }
+
     .img-logo {
         position: fixed;
         top: 20px;
