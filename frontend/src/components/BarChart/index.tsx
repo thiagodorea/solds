@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Loading from 'components/Loading';
 import { useEffect, useState } from 'react';
 import Chart from 'react-apexcharts';
 import { SaleSuccess } from 'types/saleSuccess';
@@ -11,18 +12,19 @@ type SeriesData = {
 }
 
 type ChartData = {
-    labels: {categories: string[]};
+    labels: { categories: string[] };
     series: SeriesData[];
 }
 
 const BarChart = () => {
+    const [done, setDone] = useState(false);
 
     const [chartData, setChartData] = useState<ChartData>({
-        labels:{categories:[]},
+        labels: { categories: [] },
         series: [
             {
                 name: "",
-                data: []                   
+                data: []
             }
         ]
     });
@@ -30,15 +32,16 @@ const BarChart = () => {
     useEffect(() => {
         axios.get(`${BASE_URL}/vendas/sucesso-por-vendedor`).then((response) => {
             const data = response.data as SaleSuccess[];
+            setDone(true);
             const myLabels = data.map(x => x.sellerName);
-            const mySeries = data.map(x => round(100.0 * x.deals / x.visited,1));
-    
-            setChartData ({
-                labels:{categories:myLabels},
+            const mySeries = data.map(x => round(100.0 * x.deals / x.visited, 1));
+
+            setChartData({
+                labels: { categories: myLabels },
                 series: [
                     {
                         name: "% Success",
-                        data: mySeries                   
+                        data: mySeries
                     }
                 ]
             });
@@ -52,7 +55,7 @@ const BarChart = () => {
             }
         },
     };
-    
+
     // const mockData = {
     //     labels: {
     //         categories: ['Anakin', 'Barry Allen', 'Kal-El', 'Logan', 'Padmé']
@@ -66,12 +69,18 @@ const BarChart = () => {
     // };
 
     return (
-        <Chart 
-            options={{...options, xaxis: chartData.labels}}
-            series={chartData.series}
-            type="bar"
-            height="240"
-        />
+        <>
+            {!done ? (<Loading />) : (
+                <>
+                    <Chart
+                        options={{ ...options, xaxis: chartData.labels }}
+                        series={chartData.series}
+                        type="bar"
+                        height="240"
+                    />
+                </>
+            )}
+        </>
     );
 }
 
